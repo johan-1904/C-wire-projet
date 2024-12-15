@@ -7,7 +7,6 @@ filtre() {
 	case "$4_$6" in
 	
 	vide_vide)
-		echo "ZIZI"
 		station=$5
 		awk -v stat="$station" 'BEGIN {FS =";"}  $(stat) != "-" {print $(stat), $7, $8}' $1 >> tmps/$fichier.csv
 		sed -i.bak "2d" tmps/$fichier.csv
@@ -15,7 +14,6 @@ filtre() {
 	;;
 	
 	$4_vide)
-		echo "BZEZ"
 		condition=$4
 		station=$5
 		awk  -v cond="$condition" -v stat="$station" 'BEGIN {FS =";"} $stat == cond {print $stat, $7, $8}' $1 >> tmps/$fichier.csv
@@ -23,7 +21,6 @@ filtre() {
 	;;
 	
 	vide_$6)
-		echo "STRAW"
 		station=$5
 		company=$6
 		awk -v stat="$station" -v comp="$company" 'BEGIN {FS =";"} $(stat) != "-" && $(comp) != "-" {print $stat, $7, $8}' $1 >> tmps/$fichier.csv
@@ -32,7 +29,6 @@ filtre() {
 	;;
 	
 	*)
-		echo "PENIS"
 		condition=$4
 		station=$5
 		company=$6
@@ -183,19 +179,15 @@ if [ $# -eq 4 ]
 then 
 	if [ "$4" -eq "$4" ] 2>/dev/null
 	then
-		
-		echo "CACA"
 		fichier="$2_$3_$4"	
 		touch tmps/$fichier.csv
 		check_case "$1" "$2" "$3" "$4"
 	else
-		echo "PROUT"
 		fichier="$2_$3"	
 		touch tmps/$fichier.csv
 		check_case "$1" "$2" "$3" vide
 	fi
 else
-	echo "CAKE"
 	fichier="$2_$3"	
 	touch tmps/$fichier.csv
 	check_case "$1" "$2" "$3" vide
