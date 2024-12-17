@@ -1,1 +1,19 @@
-dd
+int main(int argc, char** argv) {
+    
+    if (argc != 2) {
+        printf( "Erreur d'argument\n");
+        exit(1);
+    }
+    
+    FILE* fichier = fopen(argv[1], "r");
+    if (fichier == NULL) {
+        printf("Erreur avec le fichier\n");
+        exit(1);
+    }
+    AVL* arbre = NULL; 
+    
+   
+
+    return 0;
+}
+
