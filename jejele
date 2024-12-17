@@ -1,8 +1,6 @@
 int main(int argc, char** argv) {
-    
     if (argc != 2) {
-        printf( "Erreur d'argument\n");
-        exit(1);
+        return 1;
     }
     
     FILE* fichier = fopen(argv[1], "r");
