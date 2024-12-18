@@ -7,32 +7,35 @@ filtre() {
 	case "$4_$6" in
 	
 	vide_vide)
+		echo "TEST" // FONCTIONNE POUR HVB COMP, HVA COMP. 
 		station=$5
-		awk -v stat="$station" 'BEGIN {FS =";"}  $(stat) != "-" {print $(stat), $7, $8}' $1 >> tmp/$fichier.csv
-		sed -i.bak "2d" tmp/$fichier.csv
+		awk -v stat="$station" 'BEGIN {FS =";"}  ($(stat) != "-" && $5 != "-" && $8 != "-") || ($(stat) != "-" && $(stat+1) == "-" && $7 != "-") {print $(stat), $7, $8}' $1 >> tmp/$fichier.csv
+		sed -i.bak "1d" tmp/$fichier.csv
 		sed -i s/-/0/g tmp/$fichier.csv
 	;;
 	
 	$4_vide)
+		echo "GROTTE"	// FONCTIONNE POUR HVB COMP + num, HVA COMP + num.
 		condition=$4
 		station=$5
-		awk  -v cond="$condition" -v stat="$station" 'BEGIN {FS =";"} $stat == cond {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
+		awk  -v cond="$condition" -v stat="$station" 'BEGIN {FS =";"} ($(stat) == cond && $5 != "-" && $8 != "-") || ($(stat) == cond && $(stat+1) == "-" && $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
 		sed -i s/-/0/g tmp/$fichier.csv
 	;;
 	
 	vide_$6)
+		echo "MARCHE" // FONCTIONNE POUR LV COMP, LV INDIV, LV ALL
 		station=$5
 		company=$6
-		awk -v stat="$station" -v comp="$company" 'BEGIN {FS =";"} $(stat) != "-" && $(comp) != "-" {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
-		sed -i.bak "2d" tmp/$fichier.csv
+		awk -v stat="$station" -v comp="$company" 'BEGIN {FS =";"} ($(stat) != "-" && $(comp) != "-") || ($stat != "-" && $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
+		sed -i.bak "1d" tmp/$fichier.csv
 		sed -i s/-/0/g tmp/$fichier.csv
 	;;
-	
 	*)
+		echo "ZUT" // FONCTIONNE POUR LV COMP + num, LV INDIV + num, LV ALL + num
 		condition=$4
 		station=$5
 		company=$6
-		awk -v stat="$station" -v cond="$condition" -v comp="$company" 'BEGIN {FS =";"} $stat == cond && ($(comp) != "-" || $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
+		awk -v stat="$station" -v cond="$condition" -v comp="$company" 'BEGIN {FS =";"} ($stat == cond && $(comp) != "-")  || ($stat == cond && $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
 		sed -i s/-/0/g tmp/$fichier.csv
 	;;
 	esac
@@ -76,29 +79,24 @@ Temps d'exécution du programme : 0.0 secondes."
 vérifier_cas() {			
 		case "$2_$3" in
 
-		hvb_comp)
-			echo "Identifiant Capacité Consommation" > tmp/$fichier.csv
-			filtre "$1" "$2" "$3" "$4" 2 vide 
+		hvb_comp)		// FONCTIONNE
+			filtre "$1" "$2" "$3" "$4" 2 vide 			
 			cat tmp/$fichier.csv
 		;;
 	
-		hva_comp)
-			echo "Identifiant Capacité Consommation" > tmp/$fichier.csv
+		hva_comp)		//FONCTIONNE
 			filtre "$1" "$2" "$3" "$4" 3 vide
 			cat tmp/$fichier.csv
 		;;
 	
 		lv_comp)
-		
-			echo "Identifiant Capacité Consommation" > tmp/$fichier.csv
 			filtre "$1" "$2" "$3" "$4" 4 5
 			cat tmp/$fichier.csv
 	
 		;;
 	
 		lv_all) 
-			echo "Identifiant Capacité Consommation" > tmp/$fichier.csv
-			filtre "$1" "$2" "$3" "$4" 4 vide
+			filtre "$1" "$2" "$3" "$4" 4 all 
 			cat tmp/$fichier.csv
 			
 			touch tmp/lv_all_minmax.csv
@@ -110,7 +108,6 @@ vérifier_cas() {
 		;;
 	
 		lv_indiv)
-			echo "Identifiant Capacité Consommation" > tmp/$fichier.csv
 			filtre "$1" "$2" "$3" "$4" 4 6
 			cat tmp/$fichier.csv
 		;;
@@ -118,12 +115,6 @@ vérifier_cas() {
 		*) 	
 			echo "
 Il y a une erreur avec les arguments !"
-			if [ $4 = vide ]	
-			then
-				rm tmp/$2_$3.csv
-			else
-				rm tmp/$2_$3_$4.csv
-			fi
 			aide
 		;;  
 	
