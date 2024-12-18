@@ -1,0 +1,310 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <ctype.h>
+#include <math.h>
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#define min3(a, b, c) ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+#define max3(a, b, c) ((a) > (b) ? ((a) > (c) ? (a) : (c)) : ((b) > (c) ? (b) : (c)))
+#define min(a, b) ((a) < (b) ? (a) : (b))
+
+
+typedef struct station
+{
+    int id;                
+    int consommation; 
+    int capacite;
+} Station;
+
+typedef struct avl_struct
+{
+    Station station;             
+    int eq;                
+    struct avl_struct *fg; 
+    struct avl_struct *fd; 
+} AVL;
+
+
+AVL* creerAVL(Station station){
+
+    AVL* nouveau = malloc(sizeof(AVL));
+    if (nouveau == NULL)
+    {
+        exit(EXIT_FAILURE); 
+    }
+    nouveau->station = station;
+    nouveau->fg = NULL; 
+    nouveau->fd = NULL;
+    nouveau->eq = 0;   
+    return nouveau;
+}
+
+
+void affichage_prefixe(AVL* a){
+    if(a!=NULL){
+       printf("ID: %d, Consommation: %d, capacite: %d, EQ: %d\n", a->station.id, a->station.consommation, a->station.capacite, a->eq);
+       affichage_prefixe(a->fg);
+       affichage_prefixe(a->fd);
+    }
+}
+
+void affichage_infixe(AVL* a){
+    if(a!=NULL){
+        affichage_prefixe(a->fg);
+        printf("ID: %d, Consommation: %d, capacite: %d, EQ: %d\n", a->station.id, a->station.consommation, a->station.capacite, a->eq);
+        affichage_prefixe(a->fd);
+    }
+}
+
+
+    
+int hauteur(AVL* a) {
+    if (a == NULL){
+        return -1;
+    }
+    return 1 + max(hauteur(a->fd), hauteur(a->fg));
+}
+
+
+
+void facteurEquilibre(AVL* a) {
+    if (a != NULL){
+        a->eq = hauteur(a->fd) - hauteur(a->fg);
+        facteurEquilibre(a->fg);
+        facteurEquilibre(a->fd);
+    }
+}
+
+
+
+AVL* rotationDroite(AVL* a){
+    AVL* pivot = a->fg; 
+    int eq_a = a->eq, eq_p = pivot->eq;
+
+    a->fg = pivot->fd; 
+    pivot->fd = a;     
+
+    a->eq = eq_a - min(eq_p, 0) + 1;
+    pivot->eq = max3(eq_a + 2, eq_a + eq_p + 2, eq_p + 1);
+
+    return pivot; 
+}
+
+
+AVL* rotationGauche(AVL* a){
+    AVL* pivot = a->fd; 
+    int eq_a = a->eq, eq_p = pivot->eq;
+
+    a->fd = pivot->fg; 
+    pivot->fg = a;    
+ 
+    a->eq = eq_a - max(eq_p, 0) - 1;
+    pivot->eq = min3(eq_a - 2, eq_a + eq_p - 2, eq_p - 1);
+
+    return pivot;
+    
+}
+
+
+AVL* doubleRotationGauche(AVL* a){
+    
+    a->fd = rotationDroite(a->fd);
+    return rotationGauche(a);
+}
+
+
+AVL* doubleRotationDroite(AVL* a){
+    
+    a->fg = rotationGauche(a->fg);
+    return rotationDroite(a);
+}
+
+
+AVL* equilibrerAVL(AVL* a){
+    
+    if (a->eq >= 2){ 
+        if (a->fd->eq >= 0)
+        {
+            return rotationGauche(a); 
+        }
+        else
+        {
+            return doubleRotationGauche(a); 
+        }
+    }
+    else if (a->eq <= -2){ 
+        if (a->fg->eq <= 0)
+        {
+            return rotationDroite(a); 
+        }
+        else
+        {
+            return doubleRotationDroite(a); 
+        }
+    }
+    return a; 
+}
+
+
+AVL* insert(AVL* a, Station new_station){
+    
+    if (a == NULL){       
+        return creerAVL(new_station);
+    }
+    
+    
+    else if( new_station.id < a->station.id){ 
+        a->fg = insert(a->fg, new_station);
+        a->eq -= 1;
+    }
+    
+     else if( new_station.id > a->station.id){ 
+        a->fd = insert(a->fd, new_station);
+        a->eq += 1;
+    }
+    
+    else{
+        a->station.consommation += new_station.consommation;
+    }
+    
+    return equilibrerAVL(a);
+}
+
+
+AVL* suppMinAVL(AVL* a, int* h, int* id){
+        
+    AVL* temp;
+    if (a->fg == NULL){                  
+        *id = a->station.id; 
+        *h = -1;      
+        temp = a;
+        a = a->fd; 
+        free(temp);
+        return a;
+    }
+    
+    else{
+        a->fg = suppMinAVL(a->fg, h, id); 
+        *h = -*h;
+    }
+
+    if (*h != 0){
+        a->eq += *h;
+        if (a->eq == 0){
+            *h = -1;
+        }
+        else{
+            *h = 0;
+        }
+    }
+    return a;
+}
+    
+    
+AVL* suppression(AVL* a, int supp_id, int* h){
+    AVL* tmp;
+    if(a==NULL){
+        *h=0;
+        return a;
+    }
+    
+    else if (supp_id > a->station.id){
+        a->fd = suppression(a->fd, supp_id, h);
+        
+    }
+    
+    else if (supp_id<a->station.id){
+        a->fg = suppression(a->fg, supp_id, h);
+        
+    }
+    
+    else{
+        if(a->fg==NULL){
+            tmp = a;
+            a = a->fd;
+            free(tmp);
+            *h = -1;
+            return a;
+        }
+        else if (a->fd == NULL) {
+            tmp=a;
+            a=a->fg;
+            free(tmp);
+            *h=-1;
+        }
+        else{
+            a->fd = suppMinAVL(a->fd, h, &(a->station.id));
+        }
+    }
+    facteurEquilibre(a);
+    return(equilibrerAVL(a));
+    
+}
+
+
+ Station* classement_station(AVL* a, Station station){
+    insert(a,station);
+}        
+
+
+int est_nombre_valide(const char* str) { 
+    if (str == NULL || *str == '\0') {
+        return 0;
+    }
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isdigit(str[i])) { 
+            return 0;  
+        }
+    }
+    return 1;  
+}   
+
+
+int main(int argc, char** argv) {
+    
+    if (argc < 2) {
+        printf( "Erreur d'argument\n");
+        exit(1);
+    }
+    
+    FILE* fichier = fopen(argv[1], "r");
+    if (fichier == NULL) {
+        printf("Erreur avec le fichier\n");
+        exit(1);
+    }
+    
+
+    AVL* a = NULL;
+    char id_str[100], capacite_str[100], consommation_str[100], ligne[100]; // chaine de caractere : tester si la fct contient des lettres
+    FILE *file = fopen(argv[1], "r");
+
+    int compteur = 0; 
+    int c;             // Variable pour stocker chaque caractère lu
+
+    
+    while (fgets(ligne, sizeof(ligne), file) != NULL) {
+        // Suppression du \n
+        // line[strcspn(line, "\n")] = '\0';
+        Station station;
+        int n = sscanf(ligne, "%s %s %s",id_str, capacite_str, consommation_str);
+        if( n != 3){
+            return 1;
+        }
+        
+        if (!est_nombre_valide(id_str) || !est_nombre_valide(capacite_str) || !est_nombre_valide(consommation_str)) {
+            return 1;  
+        }
+        station.id = atoi(id_str);
+        station.capacite = atoi(capacite_str);
+        station.consommation = atoi(consommation_str);
+        
+        classement_station(a, station);
+            
+    }
+    fclose(file);
+   
+
+    return 0;
+}
