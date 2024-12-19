@@ -176,7 +176,7 @@ AVL* insert(AVL* a, Station new_station){
 void ecrire_infixe(AVL* a, FILE* fichier) {
     if (a != NULL) {
         ecrire_infixe(a->fg, fichier);
-        fprintf(fichier, "%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation);
+        fprintf(fichier, "%ld:%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation, a->station.capacite - a->station.consommation);
         ecrire_infixe(a->fd, fichier);
     }
 }
