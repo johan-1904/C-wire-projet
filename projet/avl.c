@@ -174,9 +174,14 @@ AVL* insert(AVL* a, Station new_station){
     return equilibrerAVL(a);
 }
 void ecrire_infixe(AVL* a, FILE* fichier) {
+	long diff;
     if (a != NULL) {
         ecrire_infixe(a->fg, fichier);
-        fprintf(fichier, "%ld:%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation, a->station.capacite - a->station.consommation);
+        diff = a->station.capacite - a->station.consommation;
+        if(diff<0){
+        	diff = - diff;
+        }
+        fprintf(fichier, "%ld:%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation, diff);
         ecrire_infixe(a->fd, fichier);
     }
 }
