@@ -2,9 +2,9 @@
 #define AVL_H
 #include "station.h"
 
-typedef struct avl_struct {
+typedef struct avl_struct { // structure de l'AVL
     Station station;
-    int eq;  // Équilibre de l'AVL
+    int eq;  
     struct avl_struct *fg;
     struct avl_struct *fd;
 } AVL;
