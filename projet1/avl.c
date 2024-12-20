@@ -16,7 +16,7 @@ int max(int a, int b){
 }
 
 
-int min(int a, int b){
+int min(int a, int b){ 
     
     if (a < b){
         return a;
@@ -177,12 +177,12 @@ void ecrire_infixe(AVL* a, FILE* fichier) {
 	long diff;
     if (a != NULL) {
         ecrire_infixe(a->fg, fichier);
-        diff = a->station.capacite - a->station.consommation;
-        if(diff<0){
-        	diff = - diff;
+        if(station.capacite - a->station.consommation<0){
+        	fprintf(fichier, "%ld:%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation, -(a->station.capacite - a->station.consommation));
         }
-        fprintf(fichier, "%ld:%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation, diff);
-        ecrire_infixe(a->fd, fichier);
-    }
+	else{
+        	fprintf(fichier, "%ld:%ld:%ld:%ld\n", a->station.id, a->station.capacite, a->station.consommation, diff);
+       	}
+	ecrire_infixe(a->fd, fichier);
 }
 
