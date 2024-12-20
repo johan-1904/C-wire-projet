@@ -1,48 +1,85 @@
 #!/bin/bash
 
-filtre() {
+afficher_centrale() {
 	
-	echo "arg 4 : $4, arg 6 : $6"
+	echo "						"
+	echo "Bienvenue dans notre projet C-Wire !"
+	time sleep 0.5 
+	echo 
+	
+   	echo "                       _______________ "
+	echo "                      |               |"
+    	echo "                      |    CENTRALE   |"
+    	echo "                      |   ELECTRIQUE  |"
+    	echo "                      |_______________|"
+    	echo "                             ||"
+    	echo "                            /  \\"
+    	echo "                           /    \\"
+    	echo "                          /______\\"
+    	echo "                         /        \\"
+    	echo "       _______           |   ||   |            _______"
+    	echo "      /       \\         |   ||   |           /       \\"
+    	echo "     |    O    |   __    |   ||   |    __    |    O    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |    |    |  |  |   |   ||   |   |  |   |    |    |"
+    	echo "     |____|____|__|__|___|___||___|___|__|___|____|____|"
+    	echo "								"
+}
+
+filtre() {
 	
 	case "$4_$6" in
 	
 	vide_vide)
-		echo "TEST" // FONCTIONNE POUR HVB COMP, HVA COMP. 
+		echo "Traitement en cours..."
 		station=$5
-		awk -v stat="$station" 'BEGIN {FS =";"}  ($(stat) != "-" && $5 != "-" && $8 != "-") || ($(stat) != "-" && $(stat+1) == "-" && $7 != "-") {print $(stat), $7, $8}' $1 >> tmp/$fichier.csv
-		sed -i.bak "1d" tmp/$fichier.csv
-		sed -i s/-/0/g tmp/$fichier.csv
+		awk -v stat="$station" 'BEGIN {FS =";"}  ($stat != "-" && $5 != "-" && $8 != "-") || ($stat != "-" && $(stat+1) == "-" && $7 != "-") {print $stat, $7, $8}' $1 |
+		tail -n +2 |
+		tr '-' '0' >> tmp/$fichier.csv
 	;;
 	
 	$4_vide)
-		echo "GROTTE"	// FONCTIONNE POUR HVB COMP + num, HVA COMP + num.
+		echo "Traitement en cours..."
 		condition=$4
 		station=$5
-		awk  -v cond="$condition" -v stat="$station" 'BEGIN {FS =";"} ($(stat) == cond && $5 != "-" && $8 != "-") || ($(stat) == cond && $(stat+1) == "-" && $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
-		sed -i s/-/0/g tmp/$fichier.csv
+		awk  -v cond="$condition" -v stat="$station" 'BEGIN {FS =";"} ($stat == cond && $5 != "-" && $8 != "-") || ($stat == cond && $(stat+1) == "-" && $7 != "-") {print $stat, $7, $8}' $1 |
+		tr '-' '0' >> tmp/$fichier.csv
 	;;
 	
 	vide_$6)
-		echo "MARCHE" // FONCTIONNE POUR LV COMP, LV INDIV, LV ALL
+		echo "Traitement en cours..."
 		station=$5
 		company=$6
-		awk -v stat="$station" -v comp="$company" 'BEGIN {FS =";"} ($(stat) != "-" && $(comp) != "-") || ($stat != "-" && $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
-		sed -i.bak "1d" tmp/$fichier.csv
-		sed -i s/-/0/g tmp/$fichier.csv
+		awk -v stat="$station" -v comp="$company" 'BEGIN {FS =";"} $stat != "-" && ($comp != "-" || $7 != "-") {print $stat, $7, $8}' $1 |	
+		tail -n +2 |
+		tr '-' '0' >> tmp/$fichier.csv
 	;;
 	*)
-		echo "ZUT" // FONCTIONNE POUR LV COMP + num, LV INDIV + num, LV ALL + num
+		echo "Traitement en cours..."
 		condition=$4
 		station=$5
 		company=$6
-		awk -v stat="$station" -v cond="$condition" -v comp="$company" 'BEGIN {FS =";"} ($stat == cond && $(comp) != "-")  || ($stat == cond && $7 != "-") {print $stat, $7, $8}' $1 >> tmp/$fichier.csv
-		sed -i s/-/0/g tmp/$fichier.csv
+		echo "condition : $4, station : $5, company : $6"
+		awk -v stat="$station" -v cond="$condition" -v comp="$company" 'BEGIN {FS =";"} $stat == cond && ($(comp) != "-" || $7 != "-") {print $stat, $7, $8}' $1 |
+		tr '-' '0'>> tmp/$fichier.csv
 	;;
 	esac
 }
 
 vérifier_arg4(){
-	
+		
 	condition=$3
 	
 	if [ $2 = hvb ]
@@ -77,39 +114,52 @@ Temps d'exécution du programme : 0.0 secondes."
 }
 
 vérifier_cas() {			
-		case "$2_$3" in
+		case "$2_$3_$4" in
 
-		hvb_comp)		// FONCTIONNE
+		hvb_comp_$4)		
 			filtre "$1" "$2" "$3" "$4" 2 vide 			
-			cat tmp/$fichier.csv
-		;;
-	
-		hva_comp)		//FONCTIONNE
-			filtre "$1" "$2" "$3" "$4" 3 vide
-			cat tmp/$fichier.csv
-		;;
-	
-		lv_comp)
-			filtre "$1" "$2" "$3" "$4" 4 5
-			cat tmp/$fichier.csv
-	
-		;;
-	
-		lv_all) 
-			filtre "$1" "$2" "$3" "$4" 4 all 
-			cat tmp/$fichier.csv
+			./CodeC/exec tmp/$fichier.csv
 			
-			touch tmp/lv_all_minmax.csv
-			sort -n -r -t " " -k 3 tmp/$fichier.csv > tmp/tmp.csv
-			tail -n 1 tmp/tmp.csv > tmp/final.csv
-			head -n -1 tmp/tmp.csv > tmp/tri.csv
-			head -n 10 tmp/tri.csv >> tmp/lv_all_minmax.csv
-			tail -n 10 tmp/tri.csv >> tmp/lv_all_minmax.csv
+			if [ $? -eq 1 ]
+			then 
+				echo "Erreur pendant le fonctionnement du programme C !"
+			fi
 		;;
 	
-		lv_indiv)
+		hva_comp_$4)		
+			filtre "$1" "$2" "$3" "$4" 3 vide
+			./CodeC/exec tmp/$fichier.csv
+		;;
+	
+		lv_comp_$4)
+			filtre "$1" "$2" "$3" "$4" 4 5
+			./CodeC/exec tmp/$fichier.csv
+	
+		;;
+	
+		lv_all_vide) 
+			filtre "$1" "$2" "$3" "$4" 4 all 
+			./CodeC/exec tmp/$fichier.csv
+			
+			if [ -e tests/lv_all_minmax.csv ] 
+			then
+				rm tests/lv_all_minmax.csv
+			fi
+			
+			touch tests/lv_all_minmax.csv
+			
+			sort -n -r -t ":" -k3 tmp/$fichier.csv > tmp/tri.csv
+			head -n 10 tmp/tri.csv > tmp/temp.csv
+			tail -n 10 tmp/tri.csv >> tmp/temp.csv
+			sort -n -t ":" -k4 tmp/temp.csv >> tests/lv_all_minmax.csv
+		;;
+		lv_all_$4)
+			filtre "$1" "$2" "$3" "$4" 4 all 
+			./CodeC/exec tmp/$fichier.csv
+		;;
+		lv_indiv_$4)
 			filtre "$1" "$2" "$3" "$4" 4 6
-			cat tmp/$fichier.csv
+			./CodeC/exec tmp/$fichier.csv
 		;;
 	
 		*) 	
@@ -152,7 +202,13 @@ Temps d'execution du programme : 0.0 secondes."
 		exit 2
 }
 
+afficher_centrale
+
 debut=$(date +%s)
+
+cd CodeC
+make
+cd ..
 
 for i in $@
 do
@@ -218,38 +274,42 @@ Temps d'exécution du programme : 0.0 secondes."
 	
 fi
 
-if [ $? -ne 0 ]
-
-then 
-	
-	echo "Erreur, la compilation a échoué"
-	exit 3
-
-fi
-
-
-
 if [ $# -eq 4 ]
 then 
 	if [ "$4" -eq "$4" ] 2>/dev/null
 	then
 		vérifier_arg4 "$1" "$2" "$4"
 		fichier="$2_$3_$4"	
-		touch tmp/$fichier.csv
+		if [ -e tests/$fichier.csv ]
+		then
+			rm tests/$fichier.csv
+		fi		
+		touch tests/$fichier.csv
 		vérifier_cas "$1" "$2" "$3" "$4"
 	else
 		fichier="$2_$3"	
-		touch tmp/$fichier.csv
+		if [ -e tests/$fichier.csv ]
+		then
+			rm tests/$fichier.csv
+		fi
+		touch tests/$fichier.csv
 		vérifier_cas "$1" "$2" "$3" vide
 	fi
 else
 	fichier="$2_$3"	
-	touch tmp/$fichier.csv
+	if [ -e tests/$fichier.csv ]
+	then
+		rm tests/$fichier.csv
+	fi
+	touch tests/$fichier.csv
 	vérifier_cas "$1" "$2" "$3" vide
 fi
 
+echo "Station $2:Capacité:Consommation:ValeurAbs_Diff_Capacité_Consommation" | cat tmp/$fichier.csv > tests/$fichier.csv
+
+echo " "
+echo "Le traitement est terminé !"
+
 fin=$(date +%s)
 duree=$(( $fin - $debut ))
-echo "Temps d'exécution du programme : $duree secondes."
-
-
+echo "Temps d'exécution du programme : $duree secondes."		
