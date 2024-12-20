@@ -1,7 +1,7 @@
 #ifndef STATION_H
 #define STATION_H
 
-typedef struct station
+typedef struct station // structure de la station avec des long
 {
     long id;                
     long consommation; 
