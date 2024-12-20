@@ -3,11 +3,11 @@ CFLAGS = -Wall -g
 OBJ = main.o avl.o
 EXEC = program
 
-# Compilation de l'exécutable
+# Compilation de l'exec
 $(EXEC): $(OBJ)
 	$(CC) $(CFLAGS) -o $(EXEC) $(OBJ)
 
-# Compilation des fichiers .o
+# Compilation des  .o
 main.o: main.c avl.h station.h
 	$(CC) $(CFLAGS) -c main.c
 
@@ -18,6 +18,4 @@ avl.o: avl.c avl.h station.h
 clean:
 	rm -f $(OBJ) $(EXEC)
 
-# Exécution du programme avec un fichier d'entrée
-run: $(EXEC)
-	./$(EXEC) fichier.csv
+
