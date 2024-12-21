@@ -214,7 +214,7 @@ do
 done
 
 afficher_centrale
-time sleep 0.5 
+
 debut=$(date +%s)
 
 cd CodeC
