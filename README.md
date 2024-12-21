@@ -14,17 +14,23 @@ Analyse C :
 Tri des données par identifiant.
 Calcul des consommations totales et des différences capacité/consommation.
 
-Rapports :
+Rapport :
 Génération de fichiers de sortie triés et formatés
 Format des données
 Entrée --> Chaque ligne suit le format <ID> <Capacité> <Consommation>.
 Sortie --> Chaque ligne suit le format <ID>:<Capacité>:<Consommation>:<Différence>.
 
-Utilisation :
+Lancement du programme :
 Le script principal gère le filtrage et appelle automatiquement le programme C pour l’analyse.
 Utilisez simplement la commande suivante :
 "bash c-wire.sh <Chemin vers le fichier> <Type de centrale> <Type de consommateur> <Identifiant de centrale>"
+À noter que ce dernier paramètre est optionnel.
 Vous pouvez également accéder à une aide concernant les arguments en mettant en paramètre "-h".
+
+Récupération des résultats :
+Le script principal crée automatiquement un dossier nommé "tests" dans lequel, il y a le fichier de sortie appelé :
+"<Type de centrale>_<Type de consommateur>.csv" ou bien "<Type de centrale>_<Type de consommateur>_<Identifiant de centrale>.csv"
+
 
 Prérequis :
 * Avant de lancer le programme, veillez à avoir dans un de vos dossiers:
