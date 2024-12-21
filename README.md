@@ -20,8 +20,9 @@ Sortie --> Chaque ligne suit le format <ID>:<Capacité>:<Consommation>:<Différe
 Utilisation :
 Le script principal gère le filtrage et appelle automatiquement le programme C pour l’analyse.
 Utilisez simplement la commande suivante :
-bash c-wire.sh <Chemin vers le fichier <Type de centrale/identifiant>
+bash c-wire.sh <Chemin vers le fichier> <Type de centrale/identifiant>
 
 Prérequis :
 * Système d’exploitation : Linux
+* Fichier : c-wire_v25.dat le fichier etant trop volumineux pour rentrer sur le répertoire github
 * Outils requis : bash
