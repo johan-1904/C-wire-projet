@@ -4,7 +4,10 @@ C-Wire est un programme combinant Shell et C, analysant et traitant des données
 Fonctionnalités principales
 
 Filtrage Shell :
-Extraction par type de station (HVB, HVA, LV) ou identifiant spécifique.
+Extraction par :
+  -> type de station : "HVB", "HVA", "LV".
+  -> type de consommateurs : "COMP" pour les entreprises, "INDIV" pour les particuliers ou "ALL" pour tous. 
+  -> identifiant de centrale
 Classement des 10 stations LV les plus et les moins consommatrices.
 
 Analyse C :
@@ -20,7 +23,8 @@ Sortie --> Chaque ligne suit le format <ID>:<Capacité>:<Consommation>:<Différe
 Utilisation :
 Le script principal gère le filtrage et appelle automatiquement le programme C pour l’analyse.
 Utilisez simplement la commande suivante :
-bash c-wire.sh <Chemin vers le fichier> <Type de centrale/identifiant>
+"bash c-wire.sh <Chemin vers le fichier> <Type de centrale> <Type de consommateur> <Identifiant de centrale>"
+Vous pouvez également accéder à une aide concernant les arguments en mettant en paramètre "-h".
 
 Prérequis :
 * Système d’exploitation : Linux
