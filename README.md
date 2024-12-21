@@ -27,6 +27,11 @@ Utilisez simplement la commande suivante :
 Vous pouvez également accéder à une aide concernant les arguments en mettant en paramètre "-h".
 
 Prérequis :
+* Avant de lancer le programme, veillez à avoir dans un de vos dossiers:
+  -> un dossier "input" dans lequel sera rangé le fichier de départ à analyser.
+  -> un dossier "CodeC" dans lequel vous aurez téléchargé les fichiers '.c', '.h' et le fichier 'Makefile'.
+  -> le fichier 'c-wire.sh' téléchargé à la racine des deux autres dossiers.   
 * Système d’exploitation : Linux
 * Fichier : c-wire_v25.dat le fichier etant trop volumineux pour rentrer sur le répertoire github
 * Outils requis : bash
+* Information supplémentaire : Il faudra vous rendre dans votre dossier à l'aide du terminal. 
